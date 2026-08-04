@@ -6,7 +6,7 @@ def generate():
     c.execute("SELECT company_name, eligibility_criteria, ctc, stipend, last_date, role, location, process_details, is_eligible FROM internships ORDER BY id DESC")
     internships = c.fetchall()
     
-    c.execute("SELECT company_name, next_steps, schedule FROM shortlists ORDER BY id DESC")
+    c.execute("SELECT company_name, next_steps, schedule, email_id FROM shortlists ORDER BY id DESC")
     try:
         shortlists = c.fetchall()
     except:
@@ -53,21 +53,6 @@ def generate():
                 margin: 0;
                 overflow-x: hidden;
             }
-            .lightning-flash {
-                position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: white;
-                opacity: 0;
-                pointer-events: none;
-                z-index: 100;
-                animation: thunder-crack 6s infinite;
-            }
-            @keyframes thunder-crack {
-                0%, 95%, 98%, 100% { opacity: 0; }
-                96% { opacity: 0.15; }
-                97% { opacity: 0; }
-                99% { opacity: 0.3; }
-            }
             .card {
                 background: linear-gradient(135deg, rgba(80, 0, 0, 0.4) 0%, rgba(20, 0, 0, 0.8) 100%);
                 border: 2px solid rgba(255, 215, 0, 0.1);
@@ -84,7 +69,6 @@ def generate():
             }
             .card > div { transform: skewX(2deg); }
             
-            /* Shortlist variant */
             .card-shortlist {
                 background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(5, 10, 31, 1) 100%);
                 border: 2px solid rgba(56, 189, 248, 0.3);
@@ -100,12 +84,6 @@ def generate():
                 -webkit-text-fill-color: transparent;
                 filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
             }
-            .blue-text {
-                background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0284c7 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                filter: drop-shadow(0 2px 4px rgba(56, 189, 248, 0.4));
-            }
             .badge-gold {
                 background: linear-gradient(90deg, #FFD700, #B8860B);
                 color: #000;
@@ -116,16 +94,39 @@ def generate():
                 color: #000;
                 box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
             }
+            
+            /* Glassmorphic Nav */
+            .glass-nav {
+                background: rgba(15, 15, 15, 0.4);
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                border: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            }
+            
+            .nav-btn {
+                transition: all 0.3s ease;
+            }
+            .nav-btn.active {
+                background: linear-gradient(90deg, #FFD700, #B8860B);
+                color: black;
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            }
+            .nav-btn.active-blue {
+                background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+                color: black;
+                box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            }
+
             ::-webkit-scrollbar { width: 10px; }
             ::-webkit-scrollbar-track { background: #050101; }
             ::-webkit-scrollbar-thumb { background: #FFD700; outline: 1px solid #B00000; }
         </style>
     </head>
     <body class="p-4 md:p-10 font-sans antialiased">
-        <div class="lightning-flash"></div>
         
         <div class="max-w-6xl mx-auto relative z-10">
-            <header class="mb-16 text-center">
+            <header class="mb-10 text-center">
                 <div class="inline-block relative">
                     <svg class="absolute -top-8 -left-12 w-20 h-20 text-yellow-400 opacity-20 transform -rotate-12" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
                     <h1 class="text-6xl md:text-8xl font-hero tracking-widest text-white uppercase italic transform -skew-x-6 drop-shadow-2xl">
@@ -135,58 +136,21 @@ def generate():
                 </div>
             </header>
             
-            <div class="space-y-6">
-    """
-    
-    # 1. SHORTLISTS
-    if shortlists:
-        html += '<h2 class="text-4xl font-hero uppercase tracking-widest blue-text mb-6 mt-12 border-b border-sky-400/30 pb-2 inline-block">⚡ ACTIVATED MISSIONS (Shortlisted)</h2><div class="space-y-6">'
-        for row in shortlists:
-            comp, steps, sched = row[0], row[1], row[2]
-            html += f"""
-            <article class="card card-shortlist rounded-xl p-1 group relative overflow-hidden transition-all duration-300">
-                <div class="p-5 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10 w-full bg-shazam-black/40 rounded-lg">
-                    <div class="flex-1 w-full">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-sky-400/20 pb-4">
-                            <div>
-                                <h2 class="text-3xl font-hero uppercase tracking-wider text-white drop-shadow-md mb-1">{comp}</h2>
-                                <h3 class="text-lg text-sky-400 font-black tracking-widest uppercase">SHORTLISTED</h3>
-                            </div>
-                            <div>
-                                <div class="badge-blue inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm transform -skew-x-12">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg> 
-                                    SELECTED
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-medium">
-                            <div class="flex gap-4">
-                                <div class="flex-shrink-0 text-sky-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Doomsday Schedule</p>
-                                    <p class="text-white text-lg">{sched}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <div class="flex-shrink-0 text-sky-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Next Protocol</p>
-                                    <p class="text-sm text-gray-300 leading-relaxed font-semibold">{steps}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Glassmorphic Navigation Bar -->
+            <div class="flex justify-center mb-10 sticky top-4 z-50">
+                <div class="glass-nav rounded-full p-2 flex gap-2">
+                    <button onclick="switchTab('eligible')" id="btn-eligible" class="nav-btn active px-8 py-3 rounded-full font-hero tracking-widest uppercase text-white hover:text-yellow-400">
+                        Radar (Eligible)
+                    </button>
+                    <button onclick="switchTab('shortlist')" id="btn-shortlist" class="nav-btn px-8 py-3 rounded-full font-hero tracking-widest uppercase text-white hover:text-sky-400">
+                        Activated (Shortlisted)
+                    </button>
                 </div>
-            </article>
-            """
-        html += '</div>'
-        
-    # 2. INTERNSHIPS (Eligible Radar)
-    html += '<h2 class="text-4xl font-hero uppercase tracking-widest gold-text mb-6 mt-16 border-b border-yellow-500/30 pb-2 inline-block">📡 RADAR (Eligible)</h2><div class="space-y-6">'
+            </div>
+            
+            <!-- ELIGIBLE VIEW -->
+            <div id="view-eligible" class="space-y-6">
+    """
     
     if not internships:
         html += """<div class="card rounded-xl p-12 text-center text-gray-400">
@@ -256,9 +220,104 @@ def generate():
         </article>
         """
         
+    html += '</div>'
+    
+    # 3. SHORTLISTED VIEW (Hidden by default)
+    html += '<div id="view-shortlist" class="space-y-6 hidden">'
+    if not shortlists:
+        html += """<div class="card card-shortlist rounded-xl p-12 text-center text-gray-400">
+            <div><h2 class="text-3xl font-hero uppercase tracking-widest text-white">No active missions yet...</h2></div></div>"""
+    else:
+        for row in shortlists:
+            comp, steps, sched = row[0], row[1], row[2]
+            html += f"""
+            <article class="card card-shortlist rounded-xl p-1 group relative overflow-hidden transition-all duration-300">
+                <div class="p-5 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10 w-full bg-shazam-black/40 rounded-lg">
+                    <div class="flex-1 w-full">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-sky-400/20 pb-4">
+                            <div>
+                                <h2 class="text-3xl font-hero uppercase tracking-wider text-white drop-shadow-md mb-1">{comp}</h2>
+                                <h3 class="text-lg text-sky-400 font-black tracking-widest uppercase">SHORTLISTED</h3>
+                            </div>
+                            <div>
+                                <div class="badge-blue inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm transform -skew-x-12">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg> 
+                                    SELECTED
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-medium">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 text-sky-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Doomsday Schedule</p>
+                                    <p class="text-white text-lg">{sched}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 text-sky-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Next Protocol</p>
+                                    <p class="text-sm text-gray-300 leading-relaxed font-semibold">{steps}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            """
+    html += '</div>'
+    
     html += """
-        </div></div>
+        </div>
         <script>
+            function switchTab(tab) {
+                const elBtn = document.getElementById('btn-eligible');
+                const shBtn = document.getElementById('btn-shortlist');
+                const elView = document.getElementById('view-eligible');
+                const shView = document.getElementById('view-shortlist');
+                
+                if (tab === 'eligible') {
+                    // Update buttons
+                    elBtn.classList.add('active');
+                    elBtn.classList.remove('text-white', 'hover:text-yellow-400');
+                    
+                    shBtn.classList.remove('active-blue');
+                    shBtn.classList.add('text-white', 'hover:text-sky-400');
+                    
+                    // Update views
+                    elView.classList.remove('hidden');
+                    shView.classList.add('hidden');
+                    
+                    // Replay animation slightly
+                    gsap.fromTo("#view-eligible .card", 
+                        { y: 20, opacity: 0, scale: 0.98 },
+                        { y: 0, opacity: 1, scale: 1, duration: 0.3, stagger: 0.05, ease: "power2.out" }
+                    );
+                } else {
+                    // Update buttons
+                    shBtn.classList.add('active-blue');
+                    shBtn.classList.remove('text-white', 'hover:text-sky-400');
+                    
+                    elBtn.classList.remove('active');
+                    elBtn.classList.add('text-white', 'hover:text-yellow-400');
+                    
+                    // Update views
+                    shView.classList.remove('hidden');
+                    elView.classList.add('hidden');
+                    
+                    // Replay animation slightly
+                    gsap.fromTo("#view-shortlist .card", 
+                        { y: 20, opacity: 0, scale: 0.98 },
+                        { y: 0, opacity: 1, scale: 1, duration: 0.3, stagger: 0.05, ease: "power2.out" }
+                    );
+                }
+            }
+
             document.addEventListener("DOMContentLoaded", () => {
                 gsap.fromTo(".card", 
                     { y: 50, opacity: 0, skewX: -10 },
