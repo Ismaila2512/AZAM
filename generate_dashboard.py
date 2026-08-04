@@ -123,13 +123,13 @@ def generate():
             ::-webkit-scrollbar-thumb { background: #FFD700; outline: 1px solid #B00000; }
         </style>
     </head>
-    <body class="p-4 md:p-10 font-sans antialiased">
+    <body class="p-3 sm:p-6 md:p-10 font-sans antialiased">
         
         <div class="max-w-6xl mx-auto relative z-10">
             <header class="mb-10 text-center">
                 <div class="inline-block relative">
                     <svg class="absolute -top-8 -left-12 w-20 h-20 text-yellow-400 opacity-20 transform -rotate-12" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
-                    <h1 class="text-6xl md:text-8xl font-hero tracking-widest text-white uppercase italic transform -skew-x-6 drop-shadow-2xl">
+                    <h1 class="text-5xl sm:text-6xl md:text-8xl font-hero tracking-widest text-white uppercase italic transform -skew-x-6 drop-shadow-2xl">
                         <span class="gold-text">AZAM!</span> RADAR
                     </h1>
                     <svg class="absolute -bottom-6 -right-10 w-16 h-16 text-yellow-400 opacity-40 transform rotate-12" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
@@ -138,11 +138,11 @@ def generate():
             
             <!-- Glassmorphic Navigation Bar -->
             <div class="flex justify-center mb-10 sticky top-4 z-50">
-                <div class="glass-nav rounded-full p-2 flex gap-2">
-                    <button onclick="switchTab('eligible')" id="btn-eligible" class="nav-btn active px-8 py-3 rounded-full font-hero tracking-widest uppercase text-white hover:text-yellow-400">
+                <div class="glass-nav rounded-full p-2 flex flex-row gap-1 sm:gap-2 justify-center">
+                    <button onclick="switchTab('eligible')" id="btn-eligible" class="nav-btn active px-4 py-2 sm:px-6 md:px-8 md:py-3 text-xs sm:text-sm md:text-base rounded-full font-hero tracking-widest uppercase text-white hover:text-yellow-400">
                         Radar (Eligible)
                     </button>
-                    <button onclick="switchTab('shortlist')" id="btn-shortlist" class="nav-btn px-8 py-3 rounded-full font-hero tracking-widest uppercase text-white hover:text-sky-400">
+                    <button onclick="switchTab('shortlist')" id="btn-shortlist" class="nav-btn px-4 py-2 sm:px-6 md:px-8 md:py-3 text-xs sm:text-sm md:text-base rounded-full font-hero tracking-widest uppercase text-white hover:text-sky-400">
                         Activated (Shortlisted)
                     </button>
                 </div>
