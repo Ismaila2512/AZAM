@@ -4,7 +4,13 @@ def generate():
     conn = sqlite3.connect("internships.db")
     c = conn.cursor()
     c.execute("SELECT company_name, eligibility_criteria, ctc, stipend, last_date, role, location, process_details, is_eligible FROM internships ORDER BY id DESC")
-    rows = c.fetchall()
+    internships = c.fetchall()
+    
+    c.execute("SELECT company_name, next_steps, schedule FROM shortlists ORDER BY id DESC")
+    try:
+        shortlists = c.fetchall()
+    except:
+        shortlists = []
     
     html = """
     <!DOCTYPE html>
@@ -32,7 +38,6 @@ def generate():
                                 darkred: '#5D0000',
                                 gold: '#FFD700',
                                 black: '#0F0F0F',
-                                glow: 'rgba(255, 215, 0, 0.4)',
                             }
                         }
                     }
@@ -77,22 +82,40 @@ def generate():
                 box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1);
                 background: linear-gradient(135deg, rgba(120, 0, 0, 0.6) 0%, rgba(30, 0, 0, 0.9) 100%);
             }
-            .card > div {
-                transform: skewX(2deg); /* Un-skew content */
+            .card > div { transform: skewX(2deg); }
+            
+            /* Shortlist variant */
+            .card-shortlist {
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(5, 10, 31, 1) 100%);
+                border: 2px solid rgba(56, 189, 248, 0.3);
             }
+            .card-shortlist:hover {
+                border-color: #38bdf8;
+                box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2);
+            }
+
             .gold-text {
                 background: linear-gradient(180deg, #FFF176 0%, #FFD700 50%, #B8860B 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
             }
+            .blue-text {
+                background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0284c7 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                filter: drop-shadow(0 2px 4px rgba(56, 189, 248, 0.4));
+            }
             .badge-gold {
                 background: linear-gradient(90deg, #FFD700, #B8860B);
                 color: #000;
                 box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             }
-            
-            /* Custom Scrollbar */
+            .badge-blue {
+                background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+                color: #000;
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+            }
             ::-webkit-scrollbar { width: 10px; }
             ::-webkit-scrollbar-track { background: #050101; }
             ::-webkit-scrollbar-thumb { background: #FFD700; outline: 1px solid #B00000; }
@@ -102,7 +125,7 @@ def generate():
         <div class="lightning-flash"></div>
         
         <div class="max-w-6xl mx-auto relative z-10">
-            <header class="mb-12 text-center">
+            <header class="mb-16 text-center">
                 <div class="inline-block relative">
                     <svg class="absolute -top-8 -left-12 w-20 h-20 text-yellow-400 opacity-20 transform -rotate-12" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
                     <h1 class="text-6xl md:text-8xl font-hero tracking-widest text-white uppercase italic transform -skew-x-6 drop-shadow-2xl">
@@ -110,30 +133,69 @@ def generate():
                     </h1>
                     <svg class="absolute -bottom-6 -right-10 w-16 h-16 text-yellow-400 opacity-40 transform rotate-12" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
                 </div>
-                <p class="mt-4 text-shazam-gold font-bold tracking-[0.2em] text-sm md:text-base uppercase flex justify-center items-center gap-2">
-                    <span class="w-10 h-px bg-shazam-gold"></span>
-                    Summoning Your Future
-                    <span class="w-10 h-px bg-shazam-gold"></span>
-                </p>
             </header>
             
             <div class="space-y-6">
     """
     
-    if not rows:
-        html += """
-        <div class="card rounded-xl p-12 text-center text-gray-400">
-            <div>
-                <svg class="w-20 h-20 mx-auto mb-4 text-shazam-darkred" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
-                <h2 class="text-3xl font-hero uppercase tracking-widest text-white">The Sky is Quiet...</h2>
-                <p class="mt-2 font-bold tracking-widest uppercase text-sm text-shazam-red">Awaiting new lightning strikes.</p>
-            </div>
-        </div>
-        """
+    # 1. SHORTLISTS
+    if shortlists:
+        html += '<h2 class="text-4xl font-hero uppercase tracking-widest blue-text mb-6 mt-12 border-b border-sky-400/30 pb-2 inline-block">⚡ ACTIVATED MISSIONS (Shortlisted)</h2><div class="space-y-6">'
+        for row in shortlists:
+            comp, steps, sched = row[0], row[1], row[2]
+            html += f"""
+            <article class="card card-shortlist rounded-xl p-1 group relative overflow-hidden transition-all duration-300">
+                <div class="p-5 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10 w-full bg-shazam-black/40 rounded-lg">
+                    <div class="flex-1 w-full">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-sky-400/20 pb-4">
+                            <div>
+                                <h2 class="text-3xl font-hero uppercase tracking-wider text-white drop-shadow-md mb-1">{comp}</h2>
+                                <h3 class="text-lg text-sky-400 font-black tracking-widest uppercase">SHORTLISTED</h3>
+                            </div>
+                            <div>
+                                <div class="badge-blue inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm transform -skew-x-12">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg> 
+                                    SELECTED
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-medium">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 text-sky-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Doomsday Schedule</p>
+                                    <p class="text-white text-lg">{sched}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 text-sky-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-sky-200/50 uppercase tracking-widest font-black mb-1">Next Protocol</p>
+                                    <p class="text-sm text-gray-300 leading-relaxed font-semibold">{steps}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            """
+        html += '</div>'
         
-    for i, row in enumerate(rows):
+    # 2. INTERNSHIPS (Eligible Radar)
+    html += '<h2 class="text-4xl font-hero uppercase tracking-widest gold-text mb-6 mt-16 border-b border-yellow-500/30 pb-2 inline-block">📡 RADAR (Eligible)</h2><div class="space-y-6">'
+    
+    if not internships:
+        html += """<div class="card rounded-xl p-12 text-center text-gray-400">
+            <div><svg class="w-20 h-20 mx-auto mb-4 text-shazam-darkred" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg>
+            <h2 class="text-3xl font-hero uppercase tracking-widest text-white">The Sky is Quiet...</h2>
+            <p class="mt-2 font-bold tracking-widest uppercase text-sm text-shazam-red">Awaiting new lightning strikes.</p></div></div>"""
+
+    for row in internships:
         company, criteria, ctc, stipend, last_date, role, location, process, eligible = row
-        
         company = company if company else "UNKNOWN GOLIATH"
         role = role if role else "CLASSIFIED MISSION"
         ctc = ctc if ctc and ctc != "None" else "TBD"
@@ -143,14 +205,10 @@ def generate():
         
         if eligible:
             status_html = '''<div class="badge-gold inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm transform -skew-x-12">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg> 
-                ELIGIBLE
-            </div>'''
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"></path></svg> ELIGIBLE</div>'''
         else:
-            status_html = '''<div class="inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm bg-black/60 border border-gray-700 text-gray-500 transform -skew-x-12">
-                LOCKED OUT
-            </div>'''
-        
+            status_html = '''<div class="inline-flex items-center gap-2 px-5 py-2 rounded-sm uppercase tracking-widest font-black text-sm bg-black/60 border border-gray-700 text-gray-500 transform -skew-x-12">LOCKED OUT</div>'''
+            
         html += f"""
         <article class="card rounded-xl p-1 group relative overflow-hidden transition-all duration-300">
             <div class="p-5 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10 w-full bg-shazam-black/40 rounded-lg">
@@ -162,9 +220,7 @@ def generate():
                         </div>
                         <div>{status_html}</div>
                     </div>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-medium">
-                        <!-- Power Level (Comp) -->
                         <div class="flex gap-4">
                             <div class="flex-shrink-0 text-shazam-gold">
                                 <svg class="w-6 h-6 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -175,8 +231,6 @@ def generate():
                                 <p class="text-sm text-gray-400">{stipend}</p>
                             </div>
                         </div>
-                        
-                        <!-- Ground Zero (Loc & Date) -->
                         <div class="flex gap-4">
                             <div class="flex-shrink-0 text-shazam-gold">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
@@ -187,8 +241,6 @@ def generate():
                                 <p class="text-sm text-shazam-red font-bold mt-1 uppercase tracking-wider">DOOMSDAY: {last_date}</p>
                             </div>
                         </div>
-                        
-                        <!-- Mission (Process) -->
                         <div class="flex gap-4">
                             <div class="flex-shrink-0 text-shazam-gold">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -205,31 +257,23 @@ def generate():
         """
         
     html += """
-            </div>
-        </div>
-        
+        </div></div>
         <script>
-            // Super Hero impact animations
             document.addEventListener("DOMContentLoaded", () => {
                 gsap.fromTo(".card", 
-                    { x: -100, opacity: 0, skewX: -20 },
-                    { x: 0, opacity: 1, skewX: -2, duration: 0.5, stagger: 0.1, ease: "back.out(1.7)" }
+                    { y: 50, opacity: 0, skewX: -10 },
+                    { y: 0, opacity: 1, skewX: -2, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }
                 );
-                
-                // Lightning strikes title
                 gsap.fromTo("h1", 
-                    { opacity: 0, scale: 1.5, filter: "brightness(5)" },
-                    { opacity: 1, scale: 1, filter: "brightness(1)", duration: 0.5, ease: "power4.out" }
+                    { opacity: 0, scale: 1.2, filter: "blur(10px)" },
+                    { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "power4.out" }
                 );
             });
         </script>
-    </body>
-    </html>
+    </body></html>
     """
-    
     with open("index.html", "w") as f:
         f.write(html)
 
 if __name__ == "__main__":
     generate()
-    print("index.html generated!")
