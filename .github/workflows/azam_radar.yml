@@ -25,6 +25,7 @@ jobs:
           pip install google-genai python-dotenv openpyxl reportlab
 
       - name: Run Main Internship Engine
+        continue-on-error: true
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
@@ -32,6 +33,7 @@ jobs:
         run: python main.py
 
       - name: Run Shortlist Engine
+        continue-on-error: true
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
@@ -39,6 +41,7 @@ jobs:
         run: python shortlist_bot.py
 
       - name: Commit and Push Changes
+        continue-on-error: true
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
