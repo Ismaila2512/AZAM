@@ -5,6 +5,7 @@ from email.header import decode_header
 import json
 import sqlite3
 import datetime
+# pyrefly: ignore [missing-import]
 import generate_dashboard
 from dotenv import load_dotenv
 from google import genai
@@ -60,7 +61,7 @@ def fetch_cdc_emails():
     extracted_jobs = []
     
     for eid in email_ids:
-        res, msg = mail.fetch(eid, "(RFC822)")
+        res, msg = mail.fetch(eid, "(BODY.PEEK[])")
         for response_part in msg:
             if isinstance(response_part, tuple):
                 msg_body = email.message_from_bytes(response_part[1])
@@ -83,11 +84,10 @@ def fetch_cdc_emails():
                     extracted_jobs.append({
                         "subject": subject,
                         "sender": sender,
-                        "pdfs": pdfs
+                        "pdfs": pdfs,
+                        "eid": eid
                     })
-    mail.close()
-    mail.logout()
-    return extracted_jobs
+    return extracted_jobs, mail
 
 def check_eligibility_with_gemini(job_data, profile):
     prompt = f"""
@@ -132,7 +132,10 @@ def check_eligibility_with_gemini(job_data, profile):
 def main():
     profile = load_profile()
     conn = init_db()
-    jobs = fetch_cdc_emails()
+    jobs_data = fetch_cdc_emails()
+    if not jobs_data: return
+    if isinstance(jobs_data, tuple): jobs, mail = jobs_data
+    else: jobs, mail = jobs_data, None
     
     if not jobs and os.path.exists("/Users/apple/Downloads/Machaxi - Super Dream Internship: Placement - 2027 Batch.pdf"):
         # For testing if no emails
@@ -168,6 +171,11 @@ def main():
                 ))
                 conn.commit()
                 generate_dashboard.generate()
+
+                if mail and 'eid' in job:
+                    mail.store(job['eid'], '+FLAGS', '\\Seen')
+                    print(f"Marked {job['eid']} as seen.")
+
                 
                 if result.get("is_eligible"):
                     comp = result.get('company_name', 'Company')
@@ -190,6 +198,13 @@ def main():
                         except: pass
             except Exception as e:
                 print("DB Save error:", e)
+
+
+    if mail:
+        try:
+            mail.close()
+            mail.logout()
+        except: pass
 
 if __name__ == "__main__":
     main()

@@ -214,7 +214,7 @@ def fetch_and_process():
         if messages and messages[0]:
             email_ids = messages[0].split()
             for eid in email_ids:
-                res, msg = mail.fetch(eid, "(RFC822)")
+                res, msg = mail.fetch(eid, "(BODY.PEEK[])")
                 for response_part in msg:
                     if isinstance(response_part, tuple):
                         msg_body = email.message_from_bytes(response_part[1])
@@ -252,6 +252,13 @@ def fetch_and_process():
     rows = c.fetchall()
     if rows:
         export_shortlist_pdf(rows)
+
+
+    if mail:
+        try:
+            mail.close()
+            mail.logout()
+        except: pass
 
 if __name__ == "__main__":
     fetch_and_process()
