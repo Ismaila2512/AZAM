@@ -6,7 +6,7 @@ import json
 import sqlite3
 import datetime
 # pyrefly: ignore [missing-import]
-import generate_dashboard
+from scripts import generate_dashboard
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
