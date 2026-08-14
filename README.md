@@ -6,17 +6,9 @@ An event-driven document intelligence architecture designed to ingest unstructur
 
 AZAM completely bypasses fragile regex parsing in favor of API-level MIME-type constraints. It evaluates inbound PDF documents against a strict internal criteria matrix, transfiguring conversational AI generation into structured database records with zero human intervention.
 
-```mermaid
-graph LR
-    A[IMAP Live Stream] -->|Extract| B[Unstructured PDF]
-    B -->|Gemini API| C{LLM Evaluation Matrix}
-    C -->|response_mime_type="application/json"| D[Deterministic JSON Payload]
-    D -->|Persist| E[(SQLite Engine)]
-    E -->|Trigger| F[HTML Dashboard & Dispatch]
-    
-    style C fill:#2A2A2A,stroke:#333,stroke-width:2px,color:#fff
-    style D fill:#1E1E1E,stroke:#0563C1,stroke-width:2px,color:#fff
-```
+<p align="center">
+  <img src="./azam_architecture.svg" alt="AZAM Architecture Flow" width="850">
+</p>
 
 ## Core Engineering Principles
 
