@@ -106,7 +106,7 @@ def check_eligibility_with_gemini(job_data, profile):
     1. Extract a single consolidated opportunity from all the provided contextual PDFs. Combine ALL roles into one comma-separated string if there are multiple roles.
     2. Extract: company_name, eligibility_criteria, ctc, stipend, role, location, process_details.
     3. Determine the 'last_date' (human readable) AND 'last_date_iso' in strictly '%Y-%m-%dT%H:%M:%S' format (e.g. 2026-08-05T09:00:00). Default to 23:59:59 if time is hidden.
-    4. Determine if I am ELIGIBLE based on my profile (check Degree, Branch, and CGPA if mentioned). Set is_eligible to true/false. If not eligible, explain why in rejection_reason.
+    4. Determine if I am ELIGIBLE based on my profile (check Degree, Branch, and CGPA if mentioned). NOTE: If the eligibility branches mention "All 2yrs and 5yrs M.Tech CSE/IT related branches", you MUST treat my profile as ELIGIBLE. Set is_eligible to true/false. If not eligible, explain why in rejection_reason.
     
     Output strictly as JSON.
     """
