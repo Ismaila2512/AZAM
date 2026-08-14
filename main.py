@@ -75,7 +75,9 @@ def fetch_cdc_emails():
                         continue
                     filename = part.get_filename()
                     if filename and filename.endswith(".pdf"):
-                        filepath = os.path.join(os.getcwd(), filename)
+                        pdf_dir = os.path.join(os.getcwd(), "pdfs")
+                        os.makedirs(pdf_dir, exist_ok=True)
+                        filepath = os.path.join(pdf_dir, filename)
                         with open(filepath, "wb") as f:
                             f.write(part.get_payload(decode=True))
                         pdfs.append(filepath)
