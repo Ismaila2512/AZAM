@@ -17,7 +17,7 @@ cat << XML > "$PLIST"
     <key>WorkingDirectory</key>
     <string>$PWD</string>
     <key>StartInterval</key>
-    <integer>10800</integer>
+    <integer>5400</integer>
     <key>RunAtLoad</key>
     <true/>
     <key>StandardOutPath</key>
@@ -29,4 +29,4 @@ cat << XML > "$PLIST"
 XML
 launchctl unload "$PLIST" 2>/dev/null
 launchctl load "$PLIST"
-echo "Shortlist bot service loaded! Checks every 3 hours."
+echo "Shortlist bot service loaded! Checks every 1.5 hours."
