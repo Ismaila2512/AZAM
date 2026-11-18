@@ -3,7 +3,7 @@ import sqlite3
 def generate():
     conn = sqlite3.connect("internships.db")
     c = conn.cursor()
-    c.execute("SELECT company_name, eligibility_criteria, ctc, stipend, last_date, role, location, process_details, is_eligible FROM internships ORDER BY id DESC")
+    c.execute("SELECT company_name, eligibility_criteria, ctc, stipend, last_date, role, location, process_details, is_eligible FROM internships WHERE is_eligible = 1 ORDER BY id DESC")
     internships = c.fetchall()
     
     c.execute("SELECT company_name, next_steps, schedule, email_id FROM shortlists ORDER BY id DESC")

@@ -2,5 +2,14 @@
   "degree": "MTech (Integrated / 5-years)",
   "branch": "Software Engineering",
   "cgpa": 7.84,
-  "graduation_year": 2027
+  "graduation_year": 2027,
+  "eligible_branch_patterns": [
+    "All M.Tech (CSE / IT / ECE / EEE ) related branches only",
+    "M.Tech (CSE/IT related branches)",
+    "MTech",
+    "M.E./M.Tech ( CSE,IT/EC/EEE/AI/ML,Robotics/ISE) related branches",
+    "M.Tech (CSE, IT, Mech, EEE related courses )",
+    "All 2yrs and 5yrs M.Tech CSE/IT related branches",
+    "All 5 yrs M.Tech related branches"
+  ]
 }

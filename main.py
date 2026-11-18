@@ -102,13 +102,44 @@ def check_eligibility_with_gemini(job_data, profile):
     My Academic Profile:
     {json.dumps(profile, indent=2)}
     
+    CRITICAL ELIGIBILITY RULES FOR MY PROFILE:
+    My degree is MTech (Integrated / 5-years) in Software Engineering (Graduation: 2027, CGPA: 7.84).
+    In my university, eligible drives for my branch MUST explicitly mention M.Tech or M.Tech-related eligibility.
+    Typically, the college CDC emails phrase this in formats such as:
+    - "All M.Tech (CSE / IT / ECE / EEE ) related branches only"
+    - "M.Tech (CSE/IT related branches)"
+    - "MTech" (or open to all M.Tech / M.E.)
+    - "M.E./M.Tech ( CSE,IT/EC/EEE/AI/ML,Robotics/ISE) related branches"
+    - "M.Tech (CSE, IT, Mech, EEE related courses )"
+    - "All 2yrs and 5yrs M.Tech CSE/IT related branches"
+    - "All 5 yrs M.Tech related branches"
+    - Or any criteria that explicitly includes M.Tech / 5-year Integrated M.Tech in Software Engineering / Computer Science / IT / Circuit branches.
+
+    STRICT DISQUALIFICATION:
+    If an offer mail or job description does NOT include this kind of M.Tech eligibility (for example, if it is only for B.Tech / B.E. / Bachelor's degrees, MBA only, non-engineering, or excludes M.Tech CSE/IT related branches):
+    You MUST set `is_eligible` to false and specify in `rejection_reason` that M.Tech (CSE/IT/Software Engineering) is not listed in the eligibility criteria.
+    DO NOT mark as eligible if it only states "Bachelor's degree" or "B.Tech/B.E.".
+    
     Task:
     1. Extract a single consolidated opportunity from all the provided contextual PDFs. Combine ALL roles into one comma-separated string if there are multiple roles.
     2. Extract: company_name, eligibility_criteria, ctc, stipend, role, location, process_details.
     3. Determine the 'last_date' (human readable) AND 'last_date_iso' in strictly '%Y-%m-%dT%H:%M:%S' format (e.g. 2026-08-05T09:00:00). Default to 23:59:59 if time is hidden.
-    4. Determine if I am ELIGIBLE based on my profile (check Degree, Branch, and CGPA if mentioned). NOTE: If the eligibility branches mention "All 2yrs and 5yrs M.Tech CSE/IT related branches", you MUST treat my profile as ELIGIBLE. Set is_eligible to true/false. If not eligible, explain why in rejection_reason.
+    4. Determine `is_eligible` (boolean: true/false) based strictly on the CRITICAL ELIGIBILITY RULES above, and explain reasoning in `rejection_reason`.
     
-    Output strictly as JSON.
+    Output strictly as JSON:
+    {{
+        "company_name": "...",
+        "role": "...",
+        "eligibility_criteria": "...",
+        "ctc": "...",
+        "stipend": "...",
+        "last_date": "...",
+        "last_date_iso": "...",
+        "location": "...",
+        "process_details": "...",
+        "is_eligible": true/false,
+        "rejection_reason": "..."
+    }}
     """
     
     gemini_contents = []
